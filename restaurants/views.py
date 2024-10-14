@@ -22,8 +22,15 @@ class RestaurantListView(generics.ListAPIView):
     def get_queryset(self):
         return Restaurant.objects.filter(owner=self.request.user)
 
-# Menu Item Create and List View
 
+# New View for Normal Users to List All Restaurants
+class AllRestaurantsListView(generics.ListAPIView):
+    queryset = Restaurant.objects.all()  # Return all restaurants
+    serializer_class = RestaurantSerializer
+    permission_classes = [permissions.AllowAny]  # Allow any user to access
+
+
+# Menu Item Create and List View
 
 class MenuItemCreateView(generics.CreateAPIView):
     queryset = MenuItem.objects.all()
