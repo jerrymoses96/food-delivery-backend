@@ -54,6 +54,19 @@ class MenuItemListView(generics.ListAPIView):
             return MenuItem.objects.filter(restaurant__id=restaurant_id)
         return MenuItem.objects.all()
 
+
+# New view for normal users to fetch menu items based on restaurant ID
+class UserMenuItemListView(generics.ListAPIView):
+    serializer_class = MenuItemSerializer
+    permission_classes = [permissions.AllowAny]  # Allow normal users to access
+
+    def get_queryset(self):
+        restaurant_id = self.kwargs.get('restaurant_id')
+        if restaurant_id:
+            return MenuItem.objects.filter(restaurant__id=restaurant_id)
+        return MenuItem.objects.none()  # Return empty queryset if no restaurant_id
+
+
 # Location List View
 
 
