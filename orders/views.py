@@ -15,12 +15,10 @@ class OrderListCreateView(generics.ListCreateAPIView):
         return Order.objects.filter(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
-        # Create a new order with the user set from the request
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(data=request.data, context={
+                                         'request': request})  # Pass request in context
         if serializer.is_valid():
-            # Set the user to the logged-in user
-            serializer.validated_data['user'] = request.user
-            order = serializer.save()  # Save the order, including order items
+            order = serializer.save()  # The user is set automatically in the serializer
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
