@@ -38,11 +38,13 @@ class OrderSerializer(serializers.ModelSerializer):
     restaurant = serializers.PrimaryKeyRelatedField(
         queryset=Restaurant.objects.all()  # Accept restaurant ID
     )
+    # Add this line to include the username
+    user = serializers.StringRelatedField()
 
     class Meta:
         model = Order
         fields = ['id', 'restaurant', 'total_price',
-                  'status', 'created_at', 'order_items']
+                  'status', 'created_at', 'order_items', 'user']
 
     def create(self, validated_data):
         # Print validated data to inspect it

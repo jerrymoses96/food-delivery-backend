@@ -46,12 +46,13 @@ class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
     def update(self, request, *args, **kwargs):
         order = self.get_object()
 
-        # Only the owner of the restaurant can update the status
         if request.user != order.restaurant.owner:
-            return Response({'error': 'You are not authorized to update this order.'},
-                            status=status.HTTP_403_FORBIDDEN)
+            return Response({'error': 'You are not authorized to update this order.'}, status=status.HTTP_403_FORBIDDEN)
 
-        # Partial update for order status
+        # Ensure only valid status choices are allowed
+        if 'status' in request.data and request.data['status'] not in dict(Order.STATUS_CHOICES).keys():
+            return Response({'error': 'Invalid status choice.'}, status=status.HTTP_400_BAD_REQUEST)
+
         serializer = self.get_serializer(
             order, data=request.data, partial=True)
         if serializer.is_valid():

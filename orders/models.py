@@ -5,11 +5,25 @@ from restaurants.models import Restaurant, MenuItem
 
 
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+    # Define allowed status choices
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('packing', 'Packing'),
+        ('shipped', 'Shipped'),
+        ('delivered', 'Delivered'),
+    ]
+
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='orders')
+    restaurant = models.ForeignKey(
+        Restaurant, on_delete=models.CASCADE, related_name='orders')
     total_price = models.DecimalField(
         max_digits=7, decimal_places=2, default=0.00)
-    status = models.CharField(max_length=50, default='Pending')
+
+    # Use choices for status field
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default='pending')
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
