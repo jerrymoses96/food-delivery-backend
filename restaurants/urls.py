@@ -1,10 +1,12 @@
 from django.urls import path
-from .views import RestaurantCreateView, RestaurantListView, MenuItemCreateView, MenuItemListView, LocationListView, AllRestaurantsListView, UserMenuItemListView
+from .views import RestaurantCreateView, RestaurantListView, MenuItemCreateView, MenuItemListView, LocationListView, AllRestaurantsListView, UserMenuItemListView, RestaurantUpdateView
 
 urlpatterns = [
     path('location/', LocationListView.as_view(), name='location-list'),
     path('restaurant/', RestaurantCreateView.as_view(), name='restaurant-create'),
     path('restaurants/', RestaurantListView.as_view(), name='restaurant-list'),
+    path('restaurant/<int:pk>/', RestaurantUpdateView.as_view(),
+         name='restaurant-update'),
     path('restaurants/all/', AllRestaurantsListView.as_view(),
          name='all-restaurant-list'),
     path('menu-item/', MenuItemCreateView.as_view(), name='menu-item-create'),

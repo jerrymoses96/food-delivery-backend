@@ -2,6 +2,8 @@ from rest_framework import generics, permissions
 from .models import Restaurant, MenuItem, Location
 from .serializers import RestaurantSerializer, MenuItemSerializer, LocationSerializer
 from django.shortcuts import get_object_or_404
+from rest_framework.response import Response
+
 
 # Restaurant Create and List View
 
@@ -73,3 +75,24 @@ class UserMenuItemListView(generics.ListAPIView):
 class LocationListView(generics.ListAPIView):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
+
+
+class RestaurantUpdateView(generics.UpdateAPIView):
+    queryset = Restaurant.objects.all()
+    serializer_class = RestaurantSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        # Get the restaurant instance that belongs to the authenticated user
+        return get_object_or_404(Restaurant, owner=self.request.user)
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)  # Allow partial updates
+        instance = self.get_object()
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=partial)
+
+        if serializer.is_valid():
+            self.perform_update(serializer)
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
